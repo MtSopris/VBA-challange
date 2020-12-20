@@ -1,0 +1,93 @@
+Sub VbaChallange()
+ 'Define variables
+    Dim Ticker As String
+    Dim Summary As Double
+    Dim LastRow As Long
+    Dim OpenVal As Double
+    Dim CloseVal As Double
+    Dim i As Long
+    Dim YearlyDif As Double
+    Dim PerChange As Double
+    Dim VolSummary As Double
+    Dim ws As Worksheet
+    
+For Each ws In Worksheets
+    ws.Activate
+    
+       
+    ws.Cells(1, 8) = "Ticker type"
+    ws.Cells(1, 9) = "Yearly Differance"
+    ws.Cells(1, 10) = "Percentage Change"
+    ws.Cells(1, 11) = "Total Stock Volume"
+   
+   
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    Summary = 2
+    YearlyDif = 0
+    VolSummary = 0
+    ws.Columns("j:J").Select
+    Selection.NumberFormat = "0.00%"
+    
+    'comments can be found below
+    For i = 2 To LastRow
+        OpenVal = ws.Cells(2, 3).Value
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            
+            Ticker = ws.Cells(i, 1).Value
+            Range("H" & Summary).Value = Ticker
+            
+            
+            CloseVal = ws.Cells(i, 6).Value
+            'MsgBox (CloseVal)
+            
+            'finds yealry difernace
+            YearlyDif = (CloseVal - OpenVal)
+            Range("I" & Summary).Value = YearlyDif
+            
+                If OpenVal = 0 Then
+                    PerChange = 0
+            
+                Else
+                    PerChange = (YearlyDif / OpenVal)
+                    Range("j" & Summary).Value = PerChange
+                     '-test
+                    
+                    'Selection.NumberFormat = "0.00%"
+                End If
+            
+            'finds total volume sum
+            VolSummary = VolSummary + ws.Cells(i, 7).Value
+            Range("k" & Summary).Value = VolSummary
+            
+            Summary = Summary + 1
+            
+            VolSummary = 0
+            OpenVal = ws.Cells(i, 3).Value
+            Else
+               VolSummary = VolSummary + ws.Cells(i, 7).Value
+            
+        End If
+        Next i
+            
+
+LastRowI = ws.Cells(Rows.Count, 9).End(xlUp).Row
+     For i = 2 To LastRowI
+
+        If ws.Cells(i, 9) < 0 Then
+
+            ws.Cells(i, 9).Interior.ColorIndex = 3
+
+    End If
+    Next i
+
+    For i = 2 To LastRowI
+        If ws.Cells(i, 9) >= 0 Then
+
+            ws.Cells(i, 9).Interior.ColorIndex = 4
+    End If
+    Next i
+
+
+Next
+End Sub
